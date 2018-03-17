@@ -1,0 +1,45 @@
+{
+  "name": "battleship",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "material-ui": "^1.0.0-beta.37",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "test-no-watch": "cross-env CI=true npm test",
+    "lint": "'src/**/*.js' 'src/components/**/*.js' '*.js' --write --single-quote --no-semi && standard -fix",
+    "precommit": "lint-staged && npm run test-no-watch"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --single-quote --no-semi",
+      "standard --fix",
+      "git add"
+    ]
+  },
+  "standard": {
+    "globals": [
+      "alert"
+    ],
+    "parser": "babel-eslint"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
+    "nightmare": "^3.0.0",
+    "prettier": "^1.11.1",
+    "prop-types": "^15.6.1",
+    "react-test-renderer": "^16.2.0",
+    "standard": "^11.0.0"
+  }
+}
