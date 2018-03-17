@@ -137,7 +137,7 @@ export function getElValidCoordinates (grid, validLineCoordinates) {
  * @returns {array} Ship coordinates of length size can be placed clear of
  * obstacles
  */
-export function generateLinearShipCoordinates (x, y, length, grid, lengthLimit) {
+export function generateLineShipCoordinates (x, y, length, grid, lengthLimit) {
   const validCoordinates = []
   if (lengthLimit - y >= length) {
     const southCoordinates = []
@@ -206,11 +206,71 @@ export function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export function isArrayInArray (validCoord, coordinate) {
-  return validCoord.some(coordinates =>
-    coordinates.some(coord => {
-      const coordinateAsString = JSON.stringify(coordinate)
-      return JSON.stringify(coord) === coordinateAsString
-    })
+/**
+ * 
+ * @param {array} grid Game board
+ * @param {number} lengthLimit Grid square side length
+ */
+export function generateAiBoard (grid, lengthLimit) {
+  const generateDestroyer = grid => {
+    const x = generateRandomInteger(lengthLimit - 1)
+    const y = generateRandomInteger(lengthLimit - 1)
+    if (grid[x][y].type === 'sea' && isCellClearOfShips(grid, x, y)) {
+      grid[x][y].type = 'ship'
+      return grid
+    }
+    return generateDestroyer(grid)
+  }
+  const generateCruiser = grid => {
+    const x = generateRandomInteger(lengthLimit - 1)
+    const y = generateRandomInteger(lengthLimit - 1)
+    const validCoordinates = generateLineShipCoordinates(
+      x,
+      y,
+      4,
+      grid,
+      lengthLimit
+    )
+
+    if (validCoordinates.length > 0) {
+      const finalCoordinates =
+        validCoordinates[generateRandomInteger(validCoordinates.length - 1)]
+      for (const coordinate of finalCoordinates) {
+        grid[coordinate[0]][coordinate[1]].type = 'ship'
+      }
+      return grid
+    }
+    return generateCruiser(grid)
+  }
+  const generateBattleShip = grid => {
+    const x = generateRandomInteger(lengthLimit - 1)
+    const y = generateRandomInteger(lengthLimit - 1)
+    const validCoordinates = generateLineShipCoordinates(
+      x,
+      y,
+      3,
+      grid,
+      lengthLimit
+    )
+
+    let finalValidCoordinates = []
+    if (validCoordinates.length) {
+      finalValidCoordinates = getElValidCoordinates(grid, validCoordinates)
+    }
+    if (finalValidCoordinates.length) {
+      const randomIndex = generateRandomInteger(
+        finalValidCoordinates.length - 1
+      )
+      const finalCoordinates = finalValidCoordinates[randomIndex]
+      for (const coordinate of finalCoordinates) {
+        grid[coordinate[0]][coordinate[1]].type = 'ship'
+      }
+      return grid
+    }
+    return generateBattleShip(grid)
+  }
+
+  return generateCruiser(
+    generateDestroyer(generateDestroyer(generateBattleShip(grid)))
   )
 }

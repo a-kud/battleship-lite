@@ -5,12 +5,10 @@ import './App.css'
 import Board from './components/Board'
 import Button from 'material-ui/Button'
 import {
-  isCellClearOfShips,
-  getElValidCoordinates,
   createSea,
   generateRandomInteger,
-  generateLinearShipCoordinates,
-  sleep
+  sleep,
+  generateAiBoard
 } from './utils/helpers'
 class App extends Component {
   state = {
@@ -25,89 +23,18 @@ class App extends Component {
   }
 
   handleGameStart = () => {
-    const generateAiBoard = grid => {
-      const lengthLimit = this.state.settings.boardWidth
-      const generateDestroyer = grid => {
-        const x = generateRandomInteger(lengthLimit - 1)
-        const y = generateRandomInteger(lengthLimit - 1)
-        if (grid[x][y].type === 'sea' && isCellClearOfShips(grid, x, y)) {
-          grid[x][y].type = 'ship'
-          return grid
-        }
-        return generateDestroyer(grid)
-      }
-      const generateCruiser = grid => {
-        const x = generateRandomInteger(lengthLimit - 1)
-        const y = generateRandomInteger(lengthLimit - 1)
-        const validCoordinates = generateLinearShipCoordinates(
-          x,
-          y,
-          4,
-          grid,
-          lengthLimit
-        )
-
-        if (validCoordinates.length > 0) {
-          const finalCoordinates =
-            validCoordinates[generateRandomInteger(validCoordinates.length - 1)]
-          for (const coordinate of finalCoordinates) {
-            grid[coordinate[0]][coordinate[1]].type = 'ship'
-          }
-          return grid
-        }
-        return generateCruiser(grid)
-      }
-      const generateBattleShip = grid => {
-        const x = generateRandomInteger(lengthLimit - 1)
-        const y = generateRandomInteger(lengthLimit - 1)
-        const validCoordinates = generateLinearShipCoordinates(
-          x,
-          y,
-          3,
-          grid,
-          lengthLimit
-        )
-
-        let finalValidCoordinates = []
-        if (validCoordinates.length) {
-          finalValidCoordinates = getElValidCoordinates(grid, validCoordinates)
-        }
-        if (finalValidCoordinates.length) {
-          const randomIndex = generateRandomInteger(
-            finalValidCoordinates.length - 1
-          )
-          const finalCoordinates = finalValidCoordinates[randomIndex]
-          for (const coordinate of finalCoordinates) {
-            grid[coordinate[0]][coordinate[1]].type = 'ship'
-          }
-          return grid
-        }
-        return generateBattleShip(grid)
-      }
-
-      return generateCruiser(
-        generateDestroyer(generateDestroyer(generateBattleShip(grid)))
-      )
-    }
-    this.setState(prevState => ({
-      gameStarted: true
-    }))
-
-    const updateBoard = (
-      boardName = 'userBoard',
-      type = 'ship',
-      xCoord,
-      yCoord
-    ) => {
+    const updateBoard = (boardName, type, xCoord, yCoord) => {
       const board = [...this.state[boardName]]
       board[xCoord][yCoord].type = type
       this.setState({ [boardName]: board })
     }
-    const updateHitsCount = (counterName = 'userHits') => {
+    const updateHitsCount = (counterName) => {
       this.setState(prevState => ({
         [counterName]: prevState[counterName] + 1
       }))
     }
+
+    this.setState({ gameStarted: true })
 
     const x = generateRandomInteger(9)
     const y = generateRandomInteger(9)
@@ -122,7 +49,7 @@ class App extends Component {
         alert('You have lost. Your fleet was destroyed.')
         return
       }
-      await sleep(1)
+      await sleep(10)
       if (cellType.includes('shot-missed') || cellType.includes('shiphit')) {
         return fire(generateRandomInteger(9), generateRandomInteger(9))
       }
@@ -135,19 +62,20 @@ class App extends Component {
         return fire(generateRandomInteger(9), generateRandomInteger(9))
       }
     }
-
-    const aiGrid = generateAiBoard(this.state.aiBoard)
-    this.setState({ aiBoard: aiGrid })
-
     fire(x, y)
   }
 
   componentWillMount () {
     const height = this.state.settings.boardHeight
     const width = this.state.settings.boardWidth
+    const generateBoard = () => {
+      const aiGrid = generateAiBoard(this.state.aiBoard, width)
+      this.setState({ aiBoard: aiGrid })
+    }
+
     this.setState({
       aiBoard: createSea(height, width)
-    })
+    }, generateBoard)
   }
 
   render () {
@@ -167,10 +95,8 @@ class App extends Component {
             Start
           </Button>
         </div>
-        <div className='boards'>
-          <Board board={this.state.aiBoard} onClick={this.handleClick} />
+        <Board board={this.state.aiBoard} onClick={this.handleClick} />
         </div>
-      </div>
     )
   }
 }

@@ -1,21 +1,12 @@
-import React, { Component } from 'react'
-import { object, string } from 'prop-types'
+import React from 'react'
+import { string } from 'prop-types'
 
-class Cell extends Component {
-  static propTypes = {
-    coord: object.isRequired,
-    type: string,
-    label: string
-  }
+Cell.propTypes = {
+  type: string
+}
 
-  static defaultProps = {
-    className: 'sea'
-  }
-
-  render () {
-    const { type, label } = this.props
-    return <div className={type} />
-  }
+function Cell ({ type='sea' }) {
+  return <div className={type} />
 }
 
 export default Cell

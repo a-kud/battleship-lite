@@ -1,5 +1,5 @@
 import React from 'react'
-import { arrayOf, func, object } from 'prop-types'
+import { arrayOf, object } from 'prop-types'
 
 import Grid from './Grid'
 import GridLabels from './GridLabels'

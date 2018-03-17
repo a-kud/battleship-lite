@@ -39,11 +39,6 @@
   border: 0.0625rem solid grey
 }
 
-.fog {
-  background-color: darkslategray;
-  border: 0.0625rem solid mediumblue;
-}
-
 .shot-missed {
   background-color: whitesmoke;
   border: 0.0625rem solid mediumblue;
@@ -53,20 +48,10 @@
   background-color: mediumvioletred;
 }
 
-.game-board-self {
-  margin-right: 5rem;
-}
-
-.header-self, .header-opponent {
-  text-align: center;
-}
-
-.controls, .boards {
-  width: 50rem;
-}
 
 .controls {
   margin-left: 4rem;
+  width: 50rem;
 }
 
 .game-status {

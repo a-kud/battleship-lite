@@ -1,34 +1,29 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import Cell from './Cell'
 import { generateQuickGuid } from '../utils/helpers'
-import { object, arrayOf, string, bool } from 'prop-types'
+import { object, arrayOf } from 'prop-types'
 
-class Grid extends Component {
-  static propTypes = {
-    sea: arrayOf(arrayOf(object)),
-    label: string
-  }
+Grid.propTypes = {
+  sea: arrayOf(arrayOf(object)).isRequired
+}
 
-  render () {
-    const { sea, label } = this.props
-    const filledSea = sea.map((row, x) => {
-      const seaRow = row.map((cell, y) => (
-        <Cell
-          coord={{ x: sea[x][y].x, y: sea[x][y].y }}
-          type={sea[x][y].type}
-          label={label}
-          key={generateQuickGuid()}
-        />
-      ))
-      return (
-        <div className='column' key={generateQuickGuid()}>
-          {seaRow}
-        </div>
-      )
-    })
-    return <div className='grid'>{filledSea}</div>
-  }
+function Grid ({ sea, label }) {
+  const filledSea = sea.map((row, x) =>
+    (
+      <div className='column' key={generateQuickGuid()}>
+        {
+          row.map((cell, y) => (
+            <Cell
+              type={sea[x][y].type}
+              key={generateQuickGuid()}
+            />
+          ))
+        }
+      </div>
+    )
+  )
+  return <div className='grid'>{filledSea}</div>
 }
 
 export default Grid
