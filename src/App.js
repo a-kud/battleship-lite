@@ -1,4 +1,3 @@
-/* eslint no-fallthrough: "off" */
 import React, { Component } from 'react'
 import './App.css'
 
@@ -26,14 +25,19 @@ class App extends Component {
     const height = this.state.settings.boardHeight
     const width = this.state.settings.boardWidth
     const generateFleet = () => {
-      const gridCopy = this.state.aiBoard.map(row => row.map(col => ({...col})))
+      const gridCopy = this.state.aiBoard.map(row =>
+        row.map(col => ({ ...col }))
+      )
       const aiGrid = generateAiBoard(gridCopy, width)
       this.setState({ aiBoard: aiGrid })
     }
 
-    this.setState({
-      aiBoard: createSea(height, width)
-    }, generateFleet)
+    this.setState(
+      {
+        aiBoard: createSea(height, width)
+      },
+      generateFleet
+    )
   }
 
   handleGameStart = () => {
@@ -42,7 +46,7 @@ class App extends Component {
       board[xCoord][yCoord].type = type
       this.setState({ [boardName]: board })
     }
-    const updateHitsCount = (counterName) => {
+    const updateHitsCount = counterName => {
       this.setState(prevState => ({
         [counterName]: prevState[counterName] + 1
       }))
@@ -57,7 +61,7 @@ class App extends Component {
 
       if (computerHitsCount === cellsToSunk) {
         alert('You have lost. Your fleet was destroyed.')
-        this.setState({gameStarted: false})
+        this.setState({ gameStarted: false })
         return
       }
       await sleep(5)
@@ -79,7 +83,7 @@ class App extends Component {
   }
 
   handleGameReset = () => {
-    this.setState({computerHits: 0})
+    this.setState({ computerHits: 0 })
     this.generateBoardAndFleet()
   }
 
@@ -114,7 +118,7 @@ class App extends Component {
           </Button>
         </div>
         <Board board={this.state.aiBoard} onClick={this.handleClick} />
-        </div>
+      </div>
     )
   }
 }

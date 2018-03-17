@@ -26,7 +26,10 @@
   },
   "standard": {
     "globals": [
-      "alert"
+      "alert",
+      "expect",
+      "test",
+      "describe"
     ],
     "parser": "babel-eslint"
   },
