@@ -22,6 +22,20 @@ class App extends Component {
     computerHits: 0
   }
 
+  generateBoardAndFleet = () => {
+    const height = this.state.settings.boardHeight
+    const width = this.state.settings.boardWidth
+    const generateFleet = () => {
+      const gridCopy = this.state.aiBoard.map(row => row.map(col => ({...col})))
+      const aiGrid = generateAiBoard(gridCopy, width)
+      this.setState({ aiBoard: aiGrid })
+    }
+
+    this.setState({
+      aiBoard: createSea(height, width)
+    }, generateFleet)
+  }
+
   handleGameStart = () => {
     const updateBoard = (boardName, type, xCoord, yCoord) => {
       const board = [...this.state[boardName]]
@@ -34,10 +48,6 @@ class App extends Component {
       }))
     }
 
-    this.setState({ gameStarted: true })
-
-    const x = generateRandomInteger(9)
-    const y = generateRandomInteger(9)
     const fire = async (randomX, randomY) => {
       console.log(`fire ${randomX} ${randomY}`)
 
@@ -47,9 +57,10 @@ class App extends Component {
 
       if (computerHitsCount === cellsToSunk) {
         alert('You have lost. Your fleet was destroyed.')
+        this.setState({gameStarted: false})
         return
       }
-      await sleep(10)
+      await sleep(5)
       if (cellType.includes('shot-missed') || cellType.includes('shiphit')) {
         return fire(generateRandomInteger(9), generateRandomInteger(9))
       }
@@ -62,20 +73,18 @@ class App extends Component {
         return fire(generateRandomInteger(9), generateRandomInteger(9))
       }
     }
-    fire(x, y)
+
+    this.setState({ gameStarted: true })
+    fire(generateRandomInteger(9), generateRandomInteger(9))
+  }
+
+  handleGameReset = () => {
+    this.setState({computerHits: 0})
+    this.generateBoardAndFleet()
   }
 
   componentWillMount () {
-    const height = this.state.settings.boardHeight
-    const width = this.state.settings.boardWidth
-    const generateBoard = () => {
-      const aiGrid = generateAiBoard(this.state.aiBoard, width)
-      this.setState({ aiBoard: aiGrid })
-    }
-
-    this.setState({
-      aiBoard: createSea(height, width)
-    }, generateBoard)
+    this.generateBoardAndFleet()
   }
 
   render () {
@@ -93,6 +102,15 @@ class App extends Component {
             id='start-btn'
           >
             Start
+          </Button>
+          <Button
+            variant='raised'
+            onClick={this.handleGameReset}
+            color='primary'
+            disabled={this.state.gameStarted}
+            id='start-btn'
+          >
+            Reset
           </Button>
         </div>
         <Board board={this.state.aiBoard} onClick={this.handleClick} />

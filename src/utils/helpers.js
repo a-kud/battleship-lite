@@ -31,7 +31,7 @@ export function createSea (width, height) {
   )
 }
 
-export function isCellClearOfShips (grid, i, j, typesRequested = false) {
+export function isCellClearOfShips (grid, i, j) {
   let rowLimit = 9
   let columnLimit = 9
   let types = []
@@ -43,7 +43,7 @@ export function isCellClearOfShips (grid, i, j, typesRequested = false) {
       }
     }
   }
-  return typesRequested ? types : !JSON.stringify(types).includes('ship')
+  return !JSON.stringify(types).includes('ship')
 }
 
 /**
