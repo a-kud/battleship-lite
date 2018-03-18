@@ -7,6 +7,10 @@
   height: 100vh;
 }
 
+#reset-btn {
+  margin-left: 1rem;
+}
+
 .row-label, .column-label, #app {
   justify-content: center;
   align-items: center;
@@ -36,7 +40,6 @@
 
 .ship, .ship-set {
   background-color: grey;
-  border: 0.0625rem solid grey
 }
 
 .shot-missed {
@@ -48,10 +51,8 @@
   background-color: mediumvioletred;
 }
 
-
 .controls {
-  margin-left: 4rem;
-  width: 50rem;
+  margin-left: -7rem;
 }
 
 .game-status {

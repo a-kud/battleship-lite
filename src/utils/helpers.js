@@ -50,7 +50,7 @@ export function isCellClearOfShips (grid, i, j) {
  *
  * @param {array} grid 2D game grid
  * @param {array} validLineCoordinates Contains arrays of arrays of coordinates composing of a line ship
- * @returns {array} Posible L-shaped ships coordinates
+ * @returns {array} Possible L-shaped ships coordinates
  */
 export function getElValidCoordinates (grid, validLineCoordinates) {
   const lengthLimit = /* grid[0].length */ 10
@@ -133,9 +133,8 @@ export function getElValidCoordinates (grid, validLineCoordinates) {
  * @param {number} length Ship length
  * @param {number} x Column coordinate
  * @param {number} y Row coordinate
- * @param {number} lengthLimit Grid length
- * @returns {array} Ship coordinates of length size can be placed clear of
- * obstacles
+ * @param {number} lengthLimit Grid side length
+ * @returns {array} Ship coordinates can be placed clear of obstacles
  */
 export function generateLineShipCoordinates (x, y, length, grid, lengthLimit) {
   const validCoordinates = []
@@ -207,9 +206,10 @@ export function sleep (ms) {
 }
 
 /**
- * 
- * @param {array} grid Game board
+ *
+ * @param {array} grid Game board, 2D array
  * @param {number} lengthLimit Grid square side length
+ * @returns {array} Game grid with random placed ships
  */
 export function generateAiBoard (grid, lengthLimit) {
   const generateDestroyer = grid => {

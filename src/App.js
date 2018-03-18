@@ -17,8 +17,8 @@ class App extends Component {
       cellsToSunk: 10
     },
     gameStarted: false,
-    aiBoard: [],
-    computerHits: 0
+    resetNeeded: true,
+    aiBoard: []
   }
 
   generateBoardAndFleet = () => {
@@ -46,45 +46,53 @@ class App extends Component {
       board[xCoord][yCoord].type = type
       this.setState({ [boardName]: board })
     }
-    const updateHitsCount = counterName => {
-      this.setState(prevState => ({
-        [counterName]: prevState[counterName] + 1
-      }))
-    }
 
-    const fire = async (randomX, randomY) => {
-      console.log(`fire ${randomX} ${randomY}`)
-
-      const computerHitsCount = this.state.computerHits
+    const fire = async (randomX, randomY, computerHits) => {
       const cellsToSunk = this.state.settings.cellsToSunk
       const cellType = this.state.aiBoard[randomX][randomY].type
 
-      if (computerHitsCount === cellsToSunk) {
+      if (computerHits === cellsToSunk) {
         alert('You have lost. Your fleet was destroyed.')
-        this.setState({ gameStarted: false })
-        return
+        this.setState({ resetNeeded: true })
+        return false
       }
-      await sleep(5)
+
       if (cellType.includes('shot-missed') || cellType.includes('shiphit')) {
-        return fire(generateRandomInteger(9), generateRandomInteger(9))
+        return fire(
+          generateRandomInteger(9),
+          generateRandomInteger(9),
+          computerHits
+        )
       }
       if (cellType.includes('ship')) {
         updateBoard('aiBoard', 'ship shiphit', randomX, randomY)
-        updateHitsCount('computerHits')
-        return fire(generateRandomInteger(9), generateRandomInteger(9))
-      } else {
-        updateBoard('aiBoard', 'shot-missed', randomX, randomY)
-        return fire(generateRandomInteger(9), generateRandomInteger(9))
+        await sleep(50)
+        return fire(
+          generateRandomInteger(9),
+          generateRandomInteger(9),
+          computerHits + 1
+        )
       }
+
+      updateBoard('aiBoard', 'shot-missed', randomX, randomY)
+      await sleep(50)
+      return fire(
+        generateRandomInteger(9),
+        generateRandomInteger(9),
+        computerHits
+      )
     }
 
-    this.setState({ gameStarted: true })
-    fire(generateRandomInteger(9), generateRandomInteger(9))
+    this.setState({
+      gameStarted: true,
+      resetNeeded: false
+    })
+    fire(generateRandomInteger(9), generateRandomInteger(9), 0)
   }
 
   handleGameReset = () => {
-    this.setState({ computerHits: 0 })
     this.generateBoardAndFleet()
+    this.setState({ gameStarted: false })
   }
 
   componentWillMount () {
@@ -95,7 +103,7 @@ class App extends Component {
     return (
       <div id='app'>
         <div className='header-top'>
-          <h1>Welcome to Battleship</h1>
+          <h1>Welcome to Battleship Lite</h1>
         </div>
         <div className='controls'>
           <Button
@@ -111,8 +119,8 @@ class App extends Component {
             variant='raised'
             onClick={this.handleGameReset}
             color='primary'
-            disabled={this.state.gameStarted}
-            id='start-btn'
+            disabled={!this.state.resetNeeded}
+            id='reset-btn'
           >
             Reset
           </Button>
