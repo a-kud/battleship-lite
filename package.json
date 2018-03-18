@@ -1,7 +1,7 @@
 {
-  "name": "battleship",
+  "name": "battleship-lite",
   "version": "1.0.0",
-  "homepage": "https://a-kud.github.io/battleship-lite",
+  "homepage": "https://a-kud.github.io/",
   "private": true,
   "dependencies": {
     "gh-pages": "^1.1.0",
